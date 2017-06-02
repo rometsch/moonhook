@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Moonhook</title>
+</head>
+
+<body onload="Init()" bgcolor="#7e7e7e";>
+
+<br />
+
+<center>
+  <h1>The Moonhook - TomTom says Happy Birthday!</h1>
+  <p>Select a date in Kili's life and see where the moonhook was at that time.</p>
+  <canvas id="mycanvas">
+    CANVAS NOT SUPPORTED IN THIS BROWSER!
+  </canvas>
+  <br />
+  <br />
+  <div>
+    <label for="start_date">Start date:</label>
+    <input type="date" id="start_date" value="1986-05-28">
+    <label for="start_date">Kili is young</label>
+  </div>
+  <div>
+    <label for="end_date">End date:</vlabel>
+    <input type="date" id="end_date" value="2016-05-28">
+    <label for="end_date">Kili is older...</vlabel>
+  </div>
+  <div>
+    <label for="slider_date">Select a date:</vlabel>
+    <input id='slider_date' type='range'
+      min='0' max='1.0' step='0.000001' value='0.0'
+      style="width: 40%";/>
+  </div>
+  <div>
+  <input type="date" id="current_date" value="1983-05-28">
+  <label for="slider_hour">00:00</label>
+  <input id='slider_hour' type='range'
+    min='0.0' max='1.0' step='0.001' value='0.0'
+    style="width: 20%";/>
+  <label for="slider_hour">24:00</label>
+  <div />
+</center>
+
+<script src="moonhook_src/moonhook_script.js"></script>
+
+
+</body>
