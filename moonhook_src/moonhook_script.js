@@ -129,7 +129,7 @@ function position(time) {
 
 // Caclulate the true anomaly from the eccentric anomaly.
 function calc_true_anomaly(E, e){
-	return 2*Math.arctan2(Math.sqrt(1+e)*Math.sin(E/2), Math.sqrt(1-e)*Math.cos(E/2));
+	return 2*Math.atan2(Math.sqrt(1+e)*Math.sin(E/2), Math.sqrt(1-e)*Math.cos(E/2));
 };
 
 // Calculate the eccentric anomaly solving the equation
@@ -139,15 +139,15 @@ function calc_eccentric_anomaly(M, e, Eguess){
 	eps = 1e-14;
 	f = fp = fpp = 1.0;
 	// Repeat Newton-Halley step
-	for i in range(1000):
-		if (i==999):
-			print("maximum iteration number exceeded in calculation of eccentric anomaly!");
-		if (Math.abs(f)<eps):
+	for (i=0; i<10; i++) {
+		if (Math.abs(f)<eps) {
 			break;
+		}
 		f = E - e*Math.sin(E) - M;
 		fp = 1.0 - e*Math.cos(E);
 		fpp = e*Math.sin(E);
 		E = E - 2.0*f*fp/(2.0*fp*fp-fpp*f);
+	}
 	E = E % (2.0*Math.PI);
 	return E;
 };
