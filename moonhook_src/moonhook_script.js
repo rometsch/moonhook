@@ -109,23 +109,47 @@ function position(time) {
   var siderial_day = 23 +56.0/60 + 4.0/60/60; // hour
   var period_moon = 27.3216*24; // hour
   var t = time.getTime()/(1000*60*60);  // hour
-  // // Calculate angle passed since 01.01.1993;
-  // var additional_angle = (360*t*(1.0/period_moon-1.0/siderial_day))%360;
-  // var long = ((long_0 + additional_angle)%360+360)%360;
-
+  var ecc = 0.0549;
+  // Calculate angle passed since 01.01.1993, i.e. the argument of pericenter
   // Inclination of moon path to equator:
-  var alpha = (23.44+5.145)/180*Math.PI;
+  var inc = (23.44+5.145)/180*Math.PI;
   var t0 = -0.227726876319*24; // hour
   var omega_m = 2*Math.PI/period_moon; // hour^-1
   var omega_e = 2*Math.PI/siderial_day; // hour^-1
-  var lat = Math.asin(Math.sin(alpha)*Math.sin(omega_m*(t+t0)))/Math.PI*180;
+  var M = omega_m*(t+t0);
+  var E = calc_eccentric_anomaly(M, ecc, M);
+  var f = calc_true_anomaly(E, ecc);
+  var lat = Math.asin(Math.sin(inc)*Math.sin(f))/Math.PI*180;
   var phi0 = long_0/180*Math.PI;
   // var phi = Math.atan(Math.sin(alpha)*tan((omega_m-omega_e)*t));
-  var phi = phi0 + ((omega_m-omega_e)*t);
-
-
+  var phi = phi0 - omega_e*t + Math.atan2(Math.cos(inc)*Math.sin(f), Math.cos(f))  ;
   var long = (phi%(2*Math.PI)/Math.PI*180+360)%360;
   return [long,lat];
+};
+
+// Caclulate the true anomaly from the eccentric anomaly.
+function calc_true_anomaly(E, e){
+	return 2*Math.arctan2(Math.sqrt(1+e)*Math.sin(E/2), Math.sqrt(1-e)*Math.cos(E/2));
+};
+
+// Calculate the eccentric anomaly solving the equation
+// M = E - e sin(E) using Newton-Halley method.
+function calc_eccentric_anomaly(M, e, Eguess){
+	E = Eguess;
+	eps = 1e-14;
+	f = fp = fpp = 1.0;
+	// Repeat Newton-Halley step
+	for i in range(1000):
+		if (i==999):
+			print("maximum iteration number exceeded in calculation of eccentric anomaly!");
+		if (Math.abs(f)<eps):
+			break;
+		f = E - e*Math.sin(E) - M;
+		fp = 1.0 - e*Math.cos(E);
+		fpp = e*Math.sin(E);
+		E = E - 2.0*f*fp/(2.0*fp*fp-fpp*f);
+	E = E % (2.0*Math.PI);
+	return E;
 };
 
 function update() {
